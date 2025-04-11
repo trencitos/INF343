@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package submundo;
+
+option go_package = "grpc-server/proto";
+
+// Servicio que ofrece el Submundo para COMPRAR piratas capturados
+
+service SubmundoService {
+  rpc ComprarPirata(PirataCapturado) returns (ResultadoCompra);
+}
+
+// Información del pirata ofrecido por el cazarrecompensas
+message PirataCapturado {
+  string id = 1;
+  string nombre = 2;
+  int32 recompensa = 3;
+  string cazarrecompensas_id = 4;
+  string peligrosidad = 5;
+}
+
+// Resultado de la compra
+message ResultadoCompra {
+  bool exito = 1;
+  string mensaje = 2;
+  int32 monto_pagado = 3;
+  bool fue_fraude = 4;
+}

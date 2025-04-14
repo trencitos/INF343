@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package submundo;
+
+option go_package = "grpc-server/proto";
+
+service GobiernoMundial {
+  rpc ListarPiratas (SolicitudVacia) returns (ListaPiratas);
+  rpc ValidarCaptura (Captura) returns (Validacion);
+  rpc ReportarEntrega (ReporteEntrega) returns (RespuestaEntrega);
+}
+
+service Cazarrecompensas {
+  rpc SolicitarCaptura (SolicitudCaptura) returns (Captura);
+}
+
+service Marina {
+  rpc PirataCapturado (PirataCapturado) returns (ResultadoCompra);
+}
+
+// Servicio que ofrece el Submundo para COMPRAR piratas capturados
+service SubmundoService {
+  rpc ComprarPirata(PirataCapturado) returns (ResultadoCompra);
+}
+
+// MENSAJES
+// (Request) Mensaje vacio para solicitar la lista de piratas
+message SolicitudVacia {}
+
+// (reply) Lista de piratas
+message ListaPiratas {
+  repeated PirataCapturado piratas = 1;
+}
+
+// (Request/Reply) Información de cuando se realiza una captura
+message Captura {
+  string id_cazarrecompensas = 1;
+  PirataCapturado pirata = 2;
+  string destino = 3;  // Marina o el Submundo
+}
+
+// (Reply) Validar si la captura fue válida o no
+message Validacion {
+  bool valido = 1;
+  string mensaje = 2;
+}
+
+// (Request) Información del resgistro de captura y entrega de piratas
+message ReporteEntrega {
+  string id_cazarrecompensas = 1;
+  string id_pirata = 2;
+  string resultado = 3; // "Éxito", "Fraude", "Escapado", etc.
+  string mensaje = 4;  //ej: pirata ya entregado con exito
+}
+
+// (Reply) Respuesta de si la entrega ha sido registrada exitosamente o no
+message RespuestaEntrega {
+  bool registrado = 1;
+}
+
+// (Request) ID del cazarrecompensas que solicita un pirata
+message SolicitudCaptura {
+  string id_cazarrecompensas = 1;
+}
+
+// (Request) Información del pirata ofrecido por el cazarrecompensas
+message PirataCapturado {
+  string id = 1;
+  string nombre = 2;
+  int32 recompensa = 3;
+  string cazarrecompensas_id = 4;
+  string peligrosidad = 5;
+  string estado = 6;
+}
+
+// (Reply) Resultado de la compra
+message ResultadoCompra {
+  bool exito = 1;
+  string mensaje = 2;
+  int32 monto_pagado = 3;  //recompensa obtenida
+  bool fue_fraude = 4;
+}

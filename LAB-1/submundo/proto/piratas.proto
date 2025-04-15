@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package submundo;
+package onepiece;
 
 option go_package = "grpc-server/proto";
 
@@ -15,12 +15,18 @@ message PirataCapturado {
   string nombre = 2;
   int32 recompensa = 3;
   string cazarrecompensas_id = 4;
+  string peligrosidad = 5;
 }
 
 // Resultado de la compra
 message ResultadoCompra {
-  bool exito = 1;
-  string mensaje = 2;
-  int32 monto_pagado = 3;
-  bool fue_fraude = 4;
+  enum Estado {
+    EXITO = 0;
+    FRAUDE = 1;
+    ATAQUE_MERCENARIOS = 2;
+    CONFISCADO = 3;
+  }
+  Estado estado = 1; 
+  int32 monto_pagado = 2;      // Solo relevante si estado = EXITO
+  string mensaje = 3;
 }

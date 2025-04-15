@@ -1,40 +1,13 @@
 syntax = "proto3";
 
 package onepiece;
-
 option go_package = "grpc-server/proto";
 
-// Servicio que ofrece el Submundo para COMPRAR piratas capturados
-
-service SubmundoService {
-  rpc ComprarPirata(PirataCapturado) returns (ResultadoCompra);
-}
-
+// Servicio para consultar y reportar capturas
 service GobiernoService {
   rpc ObtenerListaPiratas (SolicitudLista) returns (ListaPiratas);
   rpc ReportarCaptura (ReporteCaptura) returns (ConfirmacionCaptura);
-}
-
-// Información del pirata ofrecido por el cazarrecompensas
-message PirataCapturado {
-  string id = 1;
-  string nombre = 2;
-  int32 recompensa = 3;
-  string cazarrecompensas_id = 4;
-  string peligrosidad = 5;
-}
-
-// Resultado de la compra
-message ResultadoCompra {
-  enum Estado {
-    EXITO = 0;
-    FRAUDE = 1;
-    ATAQUE_MERCENARIOS = 2;
-    CONFISCADO = 3;
-  }
-  Estado estado = 1; 
-  int32 monto_pagado = 2;      // Solo relevante si estado = EXITO
-  string mensaje = 3;
+  // rpc EnviarRedada (cantRedada) returns ();
 }
 
 // Mensajes para el Gobierno
@@ -63,3 +36,9 @@ message ConfirmacionCaptura {
   bool exito = 1;
   string mensaje = 2;
 }
+
+/*
+message cantRedada {
+  bool ejecucion = 1;
+}
+*/

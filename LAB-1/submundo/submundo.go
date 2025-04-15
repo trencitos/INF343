@@ -8,7 +8,6 @@ import (
 	"time"
 
 	pb "submundo/proto/grpc-server/proto" // Importa el paquete generado por gRPC
-
 	"google.golang.org/grpc"
 )
 
@@ -20,8 +19,10 @@ type servidorSubmundo struct {
 // Lógica para comprar pirata
 func (s *servidorSubmundo) ComprarPirata(ctx context.Context, pirata *pb.PirataCapturado) (*pb.ResultadoCompra, error) {
 	log.Printf("Intentando comprar pirata: %s con recompensa %d berries", pirata.Nombre, pirata.Recompensa)
-
+	rand.Seed(time.Now().UnixNano())
 	resultado := &pb.ResultadoCompra{}
+
+	// PENSAR DONDE VA LA LÓGICA DE REDADA DE LA MARINA
 
 	// Verificamos probabilidad de fraude (35%)
 	if rand.Float32() < 0.35 {
@@ -30,6 +31,11 @@ func (s *servidorSubmundo) ComprarPirata(ctx context.Context, pirata *pb.PirataC
 		resultado.MontoPagado = 0
 		resultado.FueFraude = true
 	} else {
+		if req.Recompensa > 200000000 && rand.Float32() < 0.35 {
+			resp.Estado = pb.RespuestaVenta_ATAQUE_MERCENARIOS
+			return resp, nil
+		}
+
 		multiplicador := 1.0 + rand.Float32()*0.5 // entre 1.0 y 1.5
 		monto := int32(float32(pirata.Recompensa) * multiplicador)
 
@@ -49,15 +55,13 @@ func main() {
 	// Crear un listener para el servidor gRPC
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		log.Fatalf("No se pudo iniciar el servidor: %v", err)
+		log.Fatalf("Servidor falla al escuchar: %v", err)
 	}
-
 	// Crear un servidor gRPC
 	s := grpc.NewServer()
 	// Aquí puedes registrar tus servicios en el servidor gRPC
 	// Ejemplo: pb.RegisterYourServiceServer(grpcServer, &YourService{})
 	pb.RegisterSubmundoServiceServer(s, &servidorSubmundo{})
-
 	log.Println("Servidor gRPC del Submundo escuchando en el puerto 50051...")
 	// Iniciar el servidor gRPC
 	if err := s.Serve(lis); err != nil {

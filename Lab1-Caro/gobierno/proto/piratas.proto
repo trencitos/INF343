@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package onepiece;
+option go_package = "grpc-server/proto";
+
+// Servicio para consultar y reportar capturas
+service GobiernoService {
+  rpc ObtenerListaPiratas (SolicitudLista) returns (ListaPiratas);
+  rpc ReportarCaptura (ReporteCaptura) returns (ConfirmacionCaptura);
+  // rpc EnviarRedada (cantRedada) returns ();
+}
+
+// Mensajes para el Gobierno
+message SolicitudLista {
+  string cazarrecompensa_id = 1;
+}
+
+message PirataInfo {
+  string id = 1;
+  string nombre = 2;
+  uint64 recompensa = 3;
+  string peligrosidad = 4;
+  string estado = 5; // "Buscado" o "Capturado"
+}
+
+message ListaPiratas {
+  repeated PirataInfo piratas = 1;
+}
+
+message ReporteCaptura {
+  string cazarrecompensa_id = 1;
+  string pirata_id = 2;
+  string estado = 3;
+  string caso = 4;
+  string entrega = 5;
+}
+
+message ConfirmacionCaptura {
+  bool exito = 1;
+  int32 reputacion = 2;
+}
+
+/*
+message cantRedada {
+  bool ejecucion = 1;
+}
+*/
